@@ -1,2 +1,2 @@
 Django>=5.0,<6.0
-mysqlclient>=2.2.0  # If you switch to MySQL in settings.py
+Pillow>=12.0,<13.0

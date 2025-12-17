@@ -21,6 +21,7 @@ urlpatterns = [
     path('products/new/', core_views.product_create, name='product_create'),
     path('products/<int:pk>/edit/', core_views.product_edit, name='product_edit'),
     path('products/<int:pk>/delete/', core_views.product_delete, name='product_delete'),
+    path('products/<int:pk>/restore/', core_views.product_restore, name='product_restore'),
 
     # POS (Cashier & Admin)
     path('pos/', core_views.pos, name='pos'),
@@ -43,6 +44,11 @@ urlpatterns = [
 
     # Profile (All authenticated users)
     path('profile/', core_views.profile, name='profile'),
+
+    # Public API (JSON + XML)
+    path('api/products/', core_views.api_products, name='api_products'),
+    path('api/products/<int:pk>/', core_views.api_product_detail, name='api_product_detail'),
+    path('api/docs/', core_views.api_docs, name='api_docs'),
 ]
 
 # serve uploaded media in development

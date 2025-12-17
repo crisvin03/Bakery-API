@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product API – JSON & XML</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 32px; line-height: 1.6; }
+        code, pre { background: #f5f5f5; padding: 8px; display: block; border-radius: 4px; overflow-x: auto; }
+        h1, h2, h3 { margin-top: 24px; }
+        .endpoint { margin-bottom: 16px; }
+        .tag { font-weight: bold; color: #444; }
+    </style>
+</head>
+<body>
+    <h1>Product API (JSON + XML)</h1>
+    <p>All endpoints are public and support <strong>Content-Type</strong> and <strong>Accept</strong> headers for <code>application/json</code> and <code>application/xml</code>. You can also append <code>?format=xml</code> or <code>?format=json</code>.</p>
+
+    <h2>Base URL</h2>
+    <code>{{ base_url }}</code>
+
+    <h2>Endpoints</h2>
+    <div class="endpoint"><span class="tag">GET</span> /api/products/ — list products</div>
+    <div class="endpoint"><span class="tag">POST</span> /api/products/ — create product</div>
+    <div class="endpoint"><span class="tag">GET</span> /api/products/&lt;id&gt;/ — get one</div>
+    <div class="endpoint"><span class="tag">PUT</span> /api/products/&lt;id&gt;/ — update</div>
+    <div class="endpoint"><span class="tag">DELETE</span> /api/products/&lt;id&gt;/ — delete (archives if referenced in sales)</div>
+
+    <h2>JSON Examples</h2>
+    <h3>Create</h3>
+<pre>curl -X POST "{{ base_url }}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sample Bread",
+    "price": 5.25,
+    "stock": 20,
+    "ingredients": "flour, sugar"
+  }'</pre>
+
+    <h3>List</h3>
+<pre>curl -H "Accept: application/json" "{{ base_url }}"</pre>
+
+    <h3>Detail</h3>
+<pre>curl -H "Accept: application/json" "{{ base_url }}1/"</pre>
+
+    <h2>XML Examples</h2>
+    <h3>Create</h3>
+<pre>curl -X POST "{{ base_url }}?format=xml" \
+  -H "Content-Type: application/xml" \
+  -d '<product>
+        <name>Sample Bread</name>
+        <price>5.25</price>
+        <stock>20</stock>
+        <ingredients>flour, sugar</ingredients>
+      </product>'</pre>
+
+    <h3>List (Accept header)</h3>
+<pre>curl -H "Accept: application/xml" "{{ base_url }}"</pre>
+
+    <h3>Update</h3>
+<pre>curl -X PUT "{{ base_url }}1/?format=xml" \
+  -H "Content-Type: application/xml" \
+  -d '<product>
+        <stock>15</stock>
+        <is_active>false</is_active>
+      </product>'</pre>
+
+    <h2>Validation & Errors</h2>
+    <ul>
+        <li>Required: <code>name</code>, <code>price</code> on create.</li>
+        <li><code>price</code> must be decimal; <code>stock</code> must be integer ≥ 0.</li>
+        <li><code>expiration_date</code> uses ISO format <code>YYYY-MM-DD</code>.</li>
+        <li>Errors return HTTP 400 with details in JSON or XML.</li>
+    </ul>
+
+    <h2>XML vs JSON (Quick Comparison)</h2>
+    <ul>
+        <li>Size: JSON is usually smaller; XML is more verbose because of closing tags.</li>
+        <li>Readability: JSON feels closer to native objects; XML is verbose but supports mixed content and attributes.</li>
+        <li>Tooling: JSON is the default for web/mobile; XML has mature schema tooling (XSD) and strong legacy ecosystem.</li>
+        <li>Validation: XML schemas can enforce structure tightly; JSON Schema is lighter but less universally enforced.</li>
+        <li>Streaming: XML works well for streaming documents; JSON shines for lightweight API payloads.</li>
+        <li>When to prefer: JSON for typical web/mobile APIs; XML for document-centric or schema-heavy integrations.</li>
+    </ul>
+
+    <h2>Quick Test Checklist</h2>
+    <ul>
+        <li>List products: <code>GET /api/products/</code> with <code>Accept: application/json</code> or <code>application/xml</code>.</li>
+        <li>Create a product with JSON and XML.</li>
+        <li>Fetch the product by ID in both formats.</li>
+        <li>Update stock with <code>PUT</code> in both formats.</li>
+        <li>Delete: product is removed unless it has sales history, in which case it is archived.</li>
+    </ul>
+</body>
+</html>
+
