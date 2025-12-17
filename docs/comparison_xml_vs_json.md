@@ -80,3 +80,39 @@ XML:
 - JSON list: `curl -H "Accept: application/json" http://<host>/api/products/`
 - XML list: `curl -H "Accept: application/xml" http://<host>/api/products/`
 - Create/update: switch `Content-Type` between `application/json` and `application/xml`; payload shapes match the examples above.
+
+## Header Cheat Sheet
+
+- Response format: `Accept: application/json` or `Accept: application/xml` (or `?format=json|xml`).
+- Request body format: `Content-Type: application/json` or `Content-Type: application/xml`.
+- Same shape for both: `name`, `price`, `stock`, `ingredients`, `is_active`, `is_archived`, `expiration_date`.
+
+## Practical Trade-offs (Concise)
+
+- JSON: smaller, faster to parse in browsers/mobile, native to JS/TS; best default for web/mobile APIs.
+- XML: verbose but explicit; strong in legacy/enterprise and schema-driven integrations; good when partners require XML or document-style payloads.
+- Validation: XML + XSD is mature; JSON Schema is common and lighter.
+- Tooling: JSON dominates modern client stacks; XML tools are abundant in enterprise/older ecosystems.
+
+## Common Pitfalls
+
+- Missing headers: set both `Accept` (response) and `Content-Type` (request) to match the format you want.
+- Dates: `expiration_date` must be ISO `YYYY-MM-DD`.
+- Numbers: `price` must be decimal; `stock` must be integer ≥ 0.
+- Booleans: JSON uses true/false; XML uses `true`/`false` text.
+- Errors: 400 for validation, 404 for missing ID, 405 for wrong method, 409 if delete is blocked by references.
+
+## Security Notes
+
+- XML parsing uses Python’s `xml.etree.ElementTree` (safe by default here); avoid enabling external entities (XXE) in other stacks.
+- Treat all inputs as untrusted; validation paths are identical for JSON and XML.
+
+## Quick Validation Examples
+
+- Missing required field (JSON): POST without `name` → 400 with error details.
+- Invalid price (XML): `<price>abc</price>` → 400 with validation error.
+
+## When to Prefer JSON vs XML (Reminder)
+
+- Use JSON by default for web/mobile and most third-party integrations.
+- Use XML when a partner mandates it, when you need strict XSD-driven contracts, or for document-centric exchanges.
